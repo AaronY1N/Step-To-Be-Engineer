@@ -1,4 +1,4 @@
-#Case1.奧特曼打怪獸
+########################################################Case1.奧特曼打怪獸########################################################
 from abc import ABCMeta,abstractclassmethod
 from random import randint,randrange
 
@@ -135,4 +135,104 @@ def main(): #主程式
 if __name__ == '__main__':
     main()
 
-#Case2.撲克遊戲
+########################################################Case2.撲克遊戲☆☆########################################################
+#需額外理解__str__ 跟 __repr__的功用,sort的語法使用方式
+import random
+
+class Card(object): #定義一張牌的類別屬性
+    
+    def __init__(self, suite, face):
+        self._suite = suite
+        self._face = face
+    
+    @property 
+    def face(self):
+        return self._face
+    
+    @property
+    def suite(self):
+        return self._suite
+
+    def __str__(self): #__str__會顯示"非正式"的字符串顯示
+        if self.face == 1: #將1,11,12,13 轉成英文表示,此時已經是str型式
+            face_str = 'A'
+        elif self._face == 11:
+            face_str = 'J'
+        elif self._face == 12:
+            face_str = 'Q'
+        elif self._face == 13:
+            face_str = 'K'
+        else:
+            face_str = str(self._face) #將數字轉成str型式
+        return '%s%s' %(self._suite , face_str) #self._suite=花色 face_str=數字
+        
+    def __repr__(self): #將對象轉為解釋器讀取模式->此時__str__==__repr__ 才會正確顯示
+        return self.__str__()
+#__str__和__repr__兩者非隨意定義的函數,是一種控制表達方式的函數
+class Poker(object): #定義一副牌的類別屬性
+    def __init__(self):
+        self._cards = [Card(suite, face) for suite in '♠♥♣♦' for face in range(1,14)]
+        #Card類別包含suite,face兩種參數,另外range是1~14不包含上限
+        #self._cards現在是一個含有13項的列表,每一項由一個花色+數字組成
+        self._current = 0 #當作index標示列表的第0個位置
+    
+    @property
+    def cards(self): #利用property確保cards只能夠被讀取
+        return self._cards
+    
+    def shuffle(self): #定義shuffle這個函數觸發random.shuffle的效果
+        self._current = 0 #重新從0號位置開始
+        random.shuffle(self._cards) #random.shuffle可將列表的元素隨機換位
+
+    @property
+    def next(self): #發牌
+        card = self._cards[self._current] #初始self._current為0(表示第一張)
+        self._current += 1
+        return card
+    
+    @property
+    def has_next(self): #判斷是否可以抽取下一張
+        return self._current <len(self._cards)
+
+class Player(object):
+    
+    def __init__(self, name):
+        self._name = name
+        self._cards_on_hand = [] #起手定義為一個空列表
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def cards_on_hand(self):
+        return self._cards_on_hand
+    
+    def get(self, card): #摸牌
+        self._cards_on_hand.append(card) #加入到手牌->原始是空列表的那個
+    
+    def arrange(self, card_key): #將手牌排序
+        self._cards_on_hand.sort(key=card_key) #sort(key=___) 後方的東西為sort主要排序的依據
+
+def get_key(card): #得到排序依據的函數
+    return(card.suite, card.face)
+
+def main():
+    p = Poker() 
+    p.shuffle()
+    players =[Player('玩家1'),Player('玩家2'),Player('玩家3'),Player('玩家4')]
+    for _ in range(13): #重複13次
+        for player in players:
+            player.get(p.next) #每個人抽一張
+    for player in players:
+        print(player.name + ':', end=' ')
+        player.arrange(get_key) #利用get_key函數拿到card.suite,card.face的值,放入arrange函數成為card_key使其成為排序依據
+                                #同時因為觸發card類別裡的suite跟face,將顯示方式改成repr,顯示才會正確
+        print(player.cards_on_hand)
+
+if __name__ =='__main__':
+    main()
+    
+########################################################Case3.工資結算系統########################################################
+
+
