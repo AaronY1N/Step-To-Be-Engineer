@@ -234,5 +234,65 @@ if __name__ =='__main__':
     main()
     
 ########################################################Case3.工資結算系統########################################################
+from abc import ABCMeta,abstractclassmethod
 
+class Employee(object,metaclass=ABCMeta): #創建一抽象類別
+    def __init__(self, name):
+        self._name = name
+    
+    @property #一般的裝飾器
+    def name(self):
+        return self._name
+    
+    @abstractclassmethod #聲明抽象方法的裝飾器
+    def get_salary(self):
+        pass
+
+class Manager(Employee): #經理類別
+    def get_salary(self): #基礎薪資
+        return 15000.0
+
+class Programmer(Employee): #程序員類別
+    def __init__(self, name, working_hour=0): #因為新增了一個參數working_hour 所以必須super
+        super().__init__(name)
+        self._working_hour = working_hour
+    
+    @property
+    def working_hour(self):
+        return self._working_hour
+    
+    @working_hour.setter #設定工時特性
+    def working_hour(self, working_hour):
+        self._working_hour = working_hour if working_hour > 0 else 0 
+    
+    def get_salary(self):
+        return 150.0 * self._working_hour
+
+class Salesman(Employee): #銷售員類別
+    def __init__(self, name, sales=0): #因為新增一sales參數,所以要super
+        super().__init__(name)
+        self._sales = sales
+    
+    @property
+    def sales(self):
+        return self._sales
+    
+    @sales.setter #設定sales特性
+    def sales(self, sales):
+        self._sales = sales if sales > 0 else 0
+    
+    def get_salary(self):
+        return 1200.0 + self._sales *0.05
+
+def main():
+    employees = [Manager('A經理'),Manager('B經理'),Salesman('A銷售員'),Programmer('A程序員')]
+    for emp in employees: #遍歷每一位employees
+        if isinstance(emp, Programmer): #isinstance表示識別存在Programmer這個類別的人
+            emp.working_hour = int(input('請輸入%s本月工作時間: ' % emp.name))
+        elif isinstance(emp, Salesman): #isinstance表示識別存在Salesman這個類別的人
+            emp.sales = float(input('請輸入%s本月銷售額: ' % emp.name))
+        print('%s本月工資為: %sNT' % (emp.name , emp.get_salary()))
+
+if __name__ == '__main__':
+    main()
 
