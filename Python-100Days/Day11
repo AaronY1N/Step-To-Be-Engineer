@@ -1,0 +1,23 @@
+主要講述有關對於文件的讀寫功能,其中有幾個語法在判讀上需要補充。
+1.  開啟文件的語法最後，都應該設定一close文件的語法，降低占用記憶體
+2.  利用try+except來應對不同的異常狀況，最後加上finally表示必定執行。
+3.  有關於逐步讀取
+    # 通过for-in循环逐行读取
+    with open('致橡树.txt', mode='r') as f:
+        for line in f: #按照for in語法的理解,open as f 應該是將文件的每一行編列(0,1,2....)，所以才能夠使用for line in f 的方式逐行讀取
+                       #但如果純粹print(f)是不會顯示出文件的內容的
+            print(line, end='')
+            time.sleep(0.5)
+            
+    # 读取文件按行读取到列表中    
+    with open('致橡树.txt') as f:
+        lines = f.readlines()　#相比之下, readlines可以將文件每一行讀取並且形成一個列表
+    print(lines) #值得注意的是,當print出來後,列表中的每一個元素最後都含有/n換行符號
+    
+    #判斷質數的寫法,可以記下來
+    def is_prime(n):
+    assert n > 0 #可以用if的寫法,也可以用assert(斷言)的寫法
+    for factor in range(2, int(sqrt(n)) + 1): #判斷的數學式
+        if n % factor == 0:
+            return False
+    return True if n != 1 else False #去掉1
