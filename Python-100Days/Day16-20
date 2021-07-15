@@ -1,0 +1,54 @@
+1. 生成式的用法
+prices = {
+    'AAPL': 191.88,
+    'GOOG': 1186.96,
+    'IBM': 149.24,
+    'ORCL': 48.44,
+    'ACN': 166.89,
+    'FB': 208.09,
+    'SYMC': 21.29
+}
+prices2 = {key: value for key, value in prices.items() if value > 100} 
+  #因為字典的形式是{key:value},所以可以直接使用key,value來鎖定我們需要的條件
+  #items()是遍歷整個字典的內容(即所有key跟value)
+  #解析成key:value鍵值對, for當 , key跟value 是 prices.items()的值時, 如果value >100 
+print(prices2)
+
+2. 列表嵌套的寫法(列表內含列表) 
+names = ['A','B','C','D']
+course_name = ['國文','英文','數學','自然','社會']
+scores = [[None]*len(course_name) for _ in range (len(names))]
+for row , name in enumerate(names): #enumerate會輸出['下標(0-4)','內容(A,B,C,D)
+    for col, cours in enumerate(course_name):#enumerate會輸出['下標(0-5)','內容(國,英,數,自,社)
+        scores[row][col] = float(input(f'請輸入{name}的{course_name}成績: ')) #利用f'可以讓{}內的直接取用該值
+print(scores)
+#目前還有許多bug在裡面，例如輸入成績時直接按下enter就會發生錯誤，可以再加入許多異常發生時候要如何應對的擴充。
+
+3.排序(可以跟Sort比較差異)
+#使用Sort排序的時候會改變原本list的順序，而key=lambda x: x['依據']是抓取排序後資料的index
+import heapq
+
+list1 = [34, 25, 12, 99, 87, 63, 58, 78, 88, 92]
+list2 = [
+    {'name': 'IBM', 'shares': 100, 'price': 91.1},
+    {'name': 'AAPL', 'shares': 50, 'price': 543.22},
+    {'name': 'FB', 'shares': 200, 'price': 21.09},
+    {'name': 'HPQ', 'shares': 35, 'price': 31.75},
+    {'name': 'YHOO', 'shares': 45, 'price': 16.35},
+    {'name': 'ACME', 'shares': 75, 'price': 115.65}
+]
+print(heapq.nlargest(3, list1))
+print(heapq.nsmallest(3, list1))
+print(heapq.nlargest(2, list2, key=lambda x: x['price']))
+print(heapq.nlargest(2, list2, key=lambda x: x['shares']))
+#heapq的特性是會把該列表所有的內容印出，而不是只是給予依據的值(例如只給price,shares)
+
+4.循環工具模塊itertools
+# 產生ABCD的全部排列
+itertools.permutations('ABCD')#ABCD,ABDC,ACBD,ACDB,ADBC,ADCB...4!種排列方式，也可以用('ABCD',2)挑兩個做排列，此時AB,BA是不同的。
+# 產生從ABCDE取3個作排列(與permutations的差別是，ABC = ACB 所以只會挑出'C5取3'不須做排列
+itertools.combinations('ABCDE', 3)
+# 產生ABCD和123的乘積(兩兩相乘)->又稱為笛卡爾積
+itertools.product('ABCD', '123') #A1,A2,A3,B1,B2,B3...
+# 產生ABC的無限循環列
+itertools.cycle(('A', 'B', 'C')) #A,B,C,A,B,C...無限循環
