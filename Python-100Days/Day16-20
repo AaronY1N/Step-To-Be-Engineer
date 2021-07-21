@@ -1,4 +1,4 @@
-1. 生成式的用法
+1.生成式的用法
 prices = {
     'AAPL': 191.88,
     'GOOG': 1186.96,
@@ -14,7 +14,7 @@ prices2 = {key: value for key, value in prices.items() if value > 100}
   #解析成key:value鍵值對, for當 , key跟value 是 prices.items()的值時, 如果value >100 
 print(prices2)
 
-2. 列表嵌套的寫法(列表內含列表) 
+2.列表嵌套的寫法(列表內含列表) 
 names = ['A','B','C','D']
 course_name = ['國文','英文','數學','自然','社會']
 scores = [[None]*len(course_name) for _ in range (len(names))]
@@ -52,3 +52,73 @@ itertools.combinations('ABCDE', 3)
 itertools.product('ABCD', '123') #A1,A2,A3,B1,B2,B3...
 # 產生ABC的無限循環列
 itertools.cycle(('A', 'B', 'C')) #A,B,C,A,B,C...無限循環
+
+5.窮舉法(概念像是給定一條式子內含多種變數，依序控制變數，使其循環測試找出最佳解)
+for x in range(20):
+    for y in range(33):
+        z = 100 - x - y
+        if 5 * x + 3 * y + z // 3 == 100 and z % 3 == 0:
+            print(x, y, z)
+            
+6.貪婪法(概念像是給定一最大值限制，將列表內的內容物由大到小排列，從大數字開始累加，直到最靠近最大值後停止)
+class Thing(object):
+    def __init__(self, name, price, weight):
+        self.name = name
+        self.price = price
+        self.weight = weight
+    
+    @property
+    def value(self): #每單位重量所具有的價格,用於比較價值
+        return self.price / self.weight
+
+def input_thing():
+    name_str, price_str, weight_str = input().split() #split.()默認功能會將'空白'&'空字串'作為分割,再形成一個列表
+    return name_str, int(price_str), int(weight_str)
+
+def main():
+    max_weight, num_of_things = map(int, input().split()) #輸入最大重量，物品數量
+    #map的格式(function, iterable),function輸入我們所要使用的函數，iterable輸入迭代的對象
+    #此處的function 是int 迭代對象是input,意思就是把input的東西全部轉換成int的格式
+    all_things = []
+    for _ in range(num_of_things):#迭代次數為物品數量
+        all_things.append(Thing(*input_thing())) #輸入各物品的名字/價格/重量
+    all_things.sort(key=lambda x:x.value, reverse=True) #reverse=True 表示由大到小排序
+    total_weight = 0
+    total_price = 0
+    for thing in all_things:
+        if total_weight + thing.weight <= max_weight:
+            print(f'小偷拿走了{thing.name}')
+            total_weight += thing.weight
+            total_price += thing.price
+    print(f'總價值: {total_price}美元')
+#這段程式執行後，不會出現任何內容，要直接輸入格式(這點使得程式相當不自由)，值得修正。
+
+7.分治法(將主問題分割成小部分處理)
+def quick_sort(items, comp=lambda x, y: x <= y): #comp=lambda隱匿函數(回傳參數x,y其中x <= y)
+    items = list(items)[:] #[:]稱為淺層複製，將排列完的列表複製到items當中
+    _quick_sort(items, 0, len(items) -1, comp)#向_quick_sort傳入items,0,len(items)-1,comp四個參數值
+    return items
+
+def _quick_sort(items, start, end, comp): #start = 0 ,end= len(items) - 1 因為兩兩比較所以-1
+    if start < end:
+        pos = _partition(items, start, end, comp) #start = 0,end=len(items) - 1
+        _quick_sort(items, start, pos - 1, comp)
+        _quick_sort(items, pos + 1, end, comp)    
+
+def _partition(items, start, end, comp): 
+    pivot = items[end] #最後一個元素的index為 len(items) - 1,所以items[end]是最後一個元素
+    i = start - 1 #開始的時候 i = -1
+    for j in range(start, end): #當前方出現比末位置還大的數字時，if的內容就不會啟動，就可以達到緩緩將數字較大的向末位推進
+        if comp(items[j],pivot): #第一位和和末位的元素利用comp函數比大小
+            i += 1
+            items[i], items[j] = items[j], items[i]
+    items[i + 1], items[end] = items[end], items[i + 1]
+    return i + 1
+
+def main():
+    print(quick_sort([8,1,5,2,7]))
+
+if __name__ =='__main__':
+    main()
+
+
